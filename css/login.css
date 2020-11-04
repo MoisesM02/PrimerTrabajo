@@ -1,0 +1,21 @@
+.container, .card{
+   margin-top: 3vh;
+}
+input[type="submit"]{
+   margin-top: 2vh ;
+   font-size: large;
+}
+h4{
+   font-weight: 400;
+}
+.row{
+   max-height: 90vh;
+   max-width: 100vw;
+}
+img{
+   
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   width: 50%;
+}
