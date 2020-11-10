@@ -14,7 +14,9 @@
             <div class="form-group">
                 <label for="nombreProducto">Nombre de servicio</label>
                 <input type="text" class="form-control" id="nombreServicio" placeholder = "Nombre de servicio">
+                
             </div>
+  
             <div class="form-group">
                 <label for="Codigo">Tipo de servicio</label>
                 <input type="text" class="form-control" id="tipo" placeholder = "Tipo de servicio">
@@ -27,29 +29,29 @@
                     <label for="precioEmpleado">Precio del servicio</label>
                     <input type="text" class="form-control porcentaje" id="precioServicio" placeholder = "Precio del servicio">
                     </div>
+           
             <div class="form-group">
+                    <label for="precioEmpleado">Ganancia de empleado</label>
+                    <input type="text" class="form-control porcentaje" id="gananciaEmpleado" placeholder = "Porcentaje de empleado">
+                </div>
+            
             <div class="form-group">
-                    <label for="precioEmpleado">Porcentaje de empleado</label>
-                    <input type="text" class="form-control porcentaje" id="porcentajeEmpleado" placeholder = "Porcentaje de empleado">
-                    </div>
-            <div class="form-group">
-            <div class="form-group">
-                    <label for="precioEmpleado">Porcentaje de la casa</label>
-                    <input type="text" class="form-control porcentaje" id="porcentajeCasa" placeholder = "Porcentaje de casa">
+                    <label for="precioEmpleado">Ganancia de la casa</label>
+                    <input type="text" class="form-control porcentaje" id="gananciaCasa" placeholder = "Porcentaje de casa">
                     </div>
            
             <div class="row">
             <div class="col-md-5">
                     <div class="form-group">
-                    <label for="precioCliente">Ganancia de casa</label>
-                    <input type="text" class="form-control" id="gananciaCasa" placeholder = "Ganancia Casa">
+                    <label for="precioCliente">Porcentaje de casa</label>
+                    <input type="text" class="form-control" id="porcentajeCasa" placeholder = "Ganancia Casa">
                     </div>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-5">
                     <div class="form-group">
-                    <label for="precioEmpleado">Ganancia empleado</label>
-                    <input type="text" class="form-control" id="gananciaEmpleado" placeholder = "Ganancia Empleado">
+                    <label for="precioEmpleado">Porcentaje empleado</label>
+                    <input type="text" class="form-control" id="porcentajeEmpleado" placeholder = "Ganancia Empleado">
                     </div>
                 </div>
             </div>

@@ -1,3 +1,14 @@
+<?php
+session_start();
+function usernameValue(){
+if(!isset($_SESSION["username"]) && empty($_SESSION["username"])){
+    header("Location:login.php");
+}else{
+    echo utf8_encode($_SESSION["username"]);
+}
+}
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,6 +19,7 @@
     <link rel="stylesheet" href="css/servicios-crud.css">
 </head>
 <body>
+<input type="hidden" id="username" value="<?php usernameValue();?>">
 <?php include("includes/menu.php")?>
     <div class="container">
         <div class="row">
@@ -34,6 +46,7 @@
     </div>
     <input type="hidden" id="numOfRecords" value="10">
     <input type="hidden" id="PageNumber" value="1">
+    
 
     <script src="js/jquery-3.4.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

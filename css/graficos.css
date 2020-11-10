@@ -1,0 +1,11 @@
+#chart{
+    max-height: 90% !important;
+    max-width: 95% !important;
+}
+canvas{
+    width: 80%;
+    height: 60%;
+}
+.container{
+    max-height: 100vh;
+}

@@ -2,7 +2,7 @@
 include("connection.php");
 if(isset($_POST["id"]) && !empty($_POST["id"])){
     $id = $_POST["id"];
-    $stmt = $conn->prepare("DELETE from Productos WHERE ID =:id;");
+    $stmt = $conn->prepare("DELETE from Productos WHERE ID_Producto =:id;");
     try{
         $result = $stmt->execute(["id" => $id]);
     if($result){

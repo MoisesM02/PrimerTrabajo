@@ -120,6 +120,8 @@ $(document).ready(function(){
         $('#idProducto').val(producto[0].id)
         $('#precioEmpleado').val(producto[0].precioEmpleado)
         $('#precioCliente').val(producto[0].precioCliente)
+        $('#gananciaEmpleado').val(producto[0].gananciaEmpleado)
+        $('#gananciaCasa').val(producto[0].gananciaCasa)
         $('#precioCompra').val(producto[0].precioCompra)
         $('#categoriaProducto').val(producto[0].categoria)
         $('#stock').html(`<strong>${producto[0].cantidad}</strong>`)
@@ -136,6 +138,8 @@ $(document).ready(function(){
         let codigo = $('#Codigo').val();
         let precioEmpleado = $('#precioEmpleado').val();
         let precioCliente = $('#precioCliente').val();
+        let gananciaEmpleado = $('#gananciaEmpleado').val();
+        let gananciaCasa = $('#gananciaCasa').val();
         let categoria = $('#categoriaProducto').val();
         let precioCompra = $("#precioCompra").val();
         const data = {
@@ -144,12 +148,16 @@ $(document).ready(function(){
            codigo,
            precioEmpleado,
            precioCliente,
+           gananciaCasa,
+           gananciaEmpleado,
            categoria,
            precioCompra
        }
+       console.log(data);
        if(edit === true){
        $.post("Backend/edit-products.php", data, function(response){
            alert(response);
+           console.log(data)
            let numerodeEntradas = $('#numOfRecords').val();
            let pages = $('#pageNumber').val()
            load_data(pages,numerodeEntradas)
@@ -167,6 +175,8 @@ $(document).ready(function(){
         e.preventDefault()
         let nombre = $('#nombreProducto').val();
         let codigo = $('#Codigo').val();
+        let gananciaEmpleado = $('#gananciaEmpleado').val();
+        let gananciaCasa = $('#gananciaCasa').val();
         let precioEmpleado = $('#precioEmpleado').val();
         let precioCliente = $('#precioCliente').val();
         let categoria = $('#categoriaProducto').val();
@@ -176,12 +186,16 @@ $(document).ready(function(){
            codigo,
            precioEmpleado,
            precioCliente,
+           gananciaCasa,
+           gananciaEmpleado,
            categoria,
            precioCompra
        };
+       console.log(data);
        if(edit === false){
        $.post("Backend/create-products.php", data, function(response){
            alert(response);
+           console.log(data+ response);
            let numerodeEntradas = $('#numOfRecords').val();
            let pages = $('#pageNumber').val()
            load_data(pages,numerodeEntradas)
@@ -189,5 +203,41 @@ $(document).ready(function(){
        })}else{
            return false
        }
+   });
+
+   $('#precioEmpleado').on('change', function(){
+    $('#gananciaCasa').val("0");
+    $('#gananciaEmpleado').val("0");
    })
+
+   $('#gananciaCasa').on('change', function(){
+    let = precio = Number(parseFloat($('#precioEmpleado').val()).toFixed(2));
+    
+    let = gananciaCasa = Number(parseFloat($('#gananciaCasa').val()).toFixed(2));
+    if(precio >= gananciaCasa){
+    $('#gananciaEmpleado').val(precio - gananciaCasa);
+
+    }else{
+        $('#gananciaCasa').val(0)
+        $('#gananciaEmpleado').val(0)
+        alert('No se puede tener una ganancia mayor al precio total del servicio');
+       
+    }
+})
+$('#gananciaEmpleado').on('change', function(){
+    let = precio = Number(parseFloat($('#precioEmpleado').val()).toFixed(2));
+    let = gananciaEmpleado = Number(parseFloat($('#gananciaEmpleado').val()).toFixed(2));
+    if(precio >= gananciaEmpleado){
+    $('#gananciaCasa').val(precio-gananciaEmpleado);
+  
+    }else{
+        $('#gananciaEmpleado').val("0")
+        $('#gananciaCasa').val("0")
+        alert('No se puede tener una ganancia mayor al precio total del servicio');
+    }
+})
+$('#cerrarModal').on('click', function(){
+    $("#crearActualizarProductos").trigger('reset');
+})
+
 })

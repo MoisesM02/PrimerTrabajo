@@ -10,9 +10,10 @@ if(isset($_POST["nombre"]) && isset($_POST["tipo"]) && isset($_POST["duracion"])
     $porcentajeCasa = filter_var($_POST["porcentajeCasa"], FILTER_SANITIZE_STRING);
     $gananciaCasa = filter_var($_POST["gananciaCasa"], FILTER_SANITIZE_STRING);
     $gananciaEmpleado = filter_var($_POST["gananciaEmpleado"], FILTER_SANITIZE_STRING);
+    $username = filter_var(utf8_decode($_POST["username"]), FILTER_SANITIZE_STRING);
     
         try{
-        $stmt = $conn->prepare("INSERT INTO Servicios (Tiempo, Precio_Total, Porcentaje_Casa, Porcentaje_Empleada, Tipo, Nombre_de_Servicio, Ganancia_de_Empleado, Ganancia_de_Casa) VALUES(:tiempo, :precioTotal, :porcentajeCasa, :porcentajeEmpleada, :tipo, :nombreServicio, :gananciaEmpleado, :gananciaCasa);");
+        $stmt = $conn->prepare("INSERT INTO Servicios (Tiempo, Precio_Total, Porcentaje_Casa, Porcentaje_Empleada, Tipo, Nombre_de_Servicio, Ganancia_de_Empleado, Ganancia_de_Casa, Usuario) VALUES(:tiempo, :precioTotal, :porcentajeCasa, :porcentajeEmpleada, :tipo, :nombreServicio, :gananciaEmpleado, :gananciaCasa, :usuario);");
         $result = $stmt->execute([
             "tiempo" => $duracion,
             "precioTotal" => $precioServicio,
@@ -21,7 +22,8 @@ if(isset($_POST["nombre"]) && isset($_POST["tipo"]) && isset($_POST["duracion"])
             "tipo" => $tipo,
             "nombreServicio" => $nombre,
             "gananciaEmpleado" => $gananciaEmpleado,
-            "gananciaCasa" => $gananciaCasa
+            "gananciaCasa" => $gananciaCasa,
+            "usuario" => $username
         ]);
         if($result){
             echo "Producto añadido correctamente.";

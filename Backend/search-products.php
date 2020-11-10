@@ -20,14 +20,14 @@ if (isset($_POST["pageNumber"]))
 }
 $start_from = ($page-1)*$records_per_page;
 if(isset($_POST["parametro"])){
-$parametro = filter_var($_POST["parametro"], FILTER_SANITIZE_STRING);
+$parametro = utf8_decode(filter_var($_POST["parametro"], FILTER_SANITIZE_STRING));
 try{
-$stmt = $conn->prepare("SELECT * from Productos WHERE ID =:parametro OR Codigo_de_Producto =:parametro OR Categoria LIKE concat('%', :parametro, '%') OR Nombre_de_Producto LIKE concat('%', :parametro,'%') ORDER BY ID ASC LIMIT $start_from, $records_per_page;");
+$stmt = $conn->prepare("SELECT * from Productos WHERE ID_Producto =:parametro OR Codigo_de_Producto =:parametro OR Categoria LIKE concat('%', :parametro, '%') OR Nombre_de_Producto LIKE concat('%', :parametro,'%') ORDER BY ID_Producto ASC LIMIT $start_from, $records_per_page;");
 $result = $stmt->execute(["parametro" => $parametro]);
 if($result){
     $json = [];
     while($producto = $stmt->fetch(PDO::FETCH_ASSOC)){
-    $id = $producto["ID"];
+    $id = $producto["ID_Producto"];
     $nombre = utf8_encode($producto["Nombre_de_Producto"]);
     $Codigo = $producto["Codigo_de_Producto"];
     $precioEmpleado = $producto['Precio_Empleado'];
@@ -46,7 +46,7 @@ if($result){
         "categoria" => $categoria
     ];
     }
-    $pageQuery = $conn->prepare("SELECT COUNT(*) from Productos WHERE ID =:parametro OR Codigo_de_Producto =:parametro OR Categoria LIKE concat('%', :parametro, '%') OR Nombre_de_Producto LIKE concat('%', :parametro, '%');");
+    $pageQuery = $conn->prepare("SELECT COUNT(*) from Productos WHERE ID_Producto =:parametro OR Codigo_de_Producto =:parametro OR Categoria LIKE concat('%', :parametro, '%') OR Nombre_de_Producto LIKE concat('%', :parametro, '%');");
 $pageQuery->execute(["parametro" => $parametro]);
 $numOfPages = $pageQuery->fetchColumn();
 $totalPages = ceil($numOfPages/$records_per_page);
@@ -59,7 +59,6 @@ $totalPagesArray = [
     echo "No se encontró ningún producto";
 }
 }catch(Exception $e){
-// $pdo->rollback();
 throw $e;
 }
 

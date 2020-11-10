@@ -1,26 +1,37 @@
 <?php
 include("connection.php");
 if(isset($_POST["now"])){
-    $ahora = $_POST["now"];
-    $stmt = $conn->prepare("SELECT * FROM LibroServicios INNER JOIN (SELECT ID, Max(Nombre_Empleada) FROM LibroServicios WHERE :ahora NOT BETWEEN Fecha_Inicio AND Fecha_Finalizacion GROUP BY Nombre_Empleada) As grouppedempleadas ON LibroServicios.ID = grouppedempleadas.ID");
-    $result = $stmt->execute([
-        "ahora" => $ahora
-    ]);
+    $stmt = $conn->prepare("SELECT Nombre_Empleada from LibroServicios Where NOW() BETWEEN Fecha_Inicio AND Fecha_Finalizacion;");
+    $result = $stmt->execute();
     if($result){
-        if($numRows = $stmt->rowCount() >= 1){
-        $json = [];
-        while($empleadas = $stmt->fetch(PDO::FETCH_ASSOC)){
-            $json[] = [
-                "nombreEmpleada" => utf8_encode($empleadas["Nombre_Empleada"])
-            ];
+        $stmt2 = $conn->prepare("SELECT Nombre_Empleada from Empleadas WHERE Estado = 'Disponible'");
+        $result2 =$stmt2->execute();
+        if($result2 && $stmt2->rowCount() >=1){
+            $EmpleadasOcupadas = [];
+            while($Empleadas = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $EmpleadasOcupadas[] =$Empleadas["Nombre_Empleada"]; 
+            }
+            $TotalEmpleadas = [];
+            while($Empleadas2 = $stmt2->fetch(PDO::FETCH_ASSOC)){
+                $TotalEmpleadas[] =$Empleadas2["Nombre_Empleada"]; 
+            }
+            $EmpleadasFinal = array_diff($TotalEmpleadas, $EmpleadasOcupadas);
+            $json = [];
+            foreach ($EmpleadasFinal as $Empleada) {
+                $json[] = ["nombreEmpleada" => utf8_encode($Empleada)];
+            }
+           echo json_encode($json);
+           
+        }else{
+            $message = "No Hay Empleadas en el personal";
+        $message .= ($result2) ? "" : " ".$result2->rollback();
+        echo $message;
         }
-        $data = json_encode($json);
-        echo $data;
+        
     }else{
-        echo "No hay empleadas disponibles";
-    }
-    }else{
-        echo "Hubo un error al seleccionar los datos". $result->rollback();
+        $message = "No se encontraron empleadas disponibles";
+        $message .= ($result) ? "" : " ";
+        echo $message;
     }
 }
 ?>

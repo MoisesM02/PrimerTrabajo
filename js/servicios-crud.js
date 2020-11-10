@@ -3,41 +3,36 @@ $(document).ready(function(){
     let search = false
     crearTabla(1,10);
 
-    $('#gananciaCasa').attr('disabled', 'disabled'); 
-    $('#gananciaEmpleado').attr('disabled', 'disabled'); 
+    $('#porcentajeCasa').attr('disabled', 'disabled'); 
+    $('#porcentajeEmpleado').attr('disabled', 'disabled'); 
 
     
-    $('#precioServicio').on('change', function(){
-        let = precio = $('#precioServicio').val();
-        let = porcentajeCasa = $('#porcentajeCasa').val();
-        let = porcentajeEmpleado = $('#porcentajeEmpleado').val();
-
-        let gananciaCasa = precio*(porcentajeCasa/100);
-        let gananciaEmpleado = precio*(porcentajeEmpleado/100);
-        $('#gananciaCasa').val(gananciaCasa);
-        $('#gananciaEmpleado').val(gananciaEmpleado);
-    });
-    $('#porcentajeCasa').on('change', function(){
-        let = precio = $('#precioServicio').val();
-        let = porcentajeCasa = $('#porcentajeCasa').val();
-        $('#porcentajeEmpleado').val(100-porcentajeCasa)
-        let = porcentajeEmpleado = $('#porcentajeEmpleado').val();
-
-        let gananciaCasa = precio*(porcentajeCasa/100);
-        let gananciaEmpleado = precio*(porcentajeEmpleado/100);
-        $('#gananciaCasa').val(gananciaCasa);
-        $('#gananciaEmpleado').val(gananciaEmpleado);
+    
+    $('#gananciaCasa').on('change', function(){
+        let = precio = Number(parseFloat($('#precioServicio').val()).toFixed(2));
+        
+        let = gananciaCasa = Number(parseFloat($('#gananciaCasa').val()).toFixed(2));
+        if(precio >= gananciaCasa){
+        $('#gananciaEmpleado').val(precio - gananciaCasa);
+        $('#porcentajeEmpleado').val((((precio-gananciaCasa)*100)/precio).toFixed(2));
+        $('#porcentajeCasa').val(((gananciaCasa*100)/precio).toFixed(2));
+        }else{
+            $('#gananciaCasa').val("0")
+            alert('No se puede tener una ganancia mayor al precio total del servicio');
+           
+        }
     })
-    $('#porcentajeEmpleado').on('change', function(){
-        let = precio = $('#precioServicio').val();
-        let = porcentajeEmpleado = $('#porcentajeEmpleado').val();
-        $('#porcentajeCasa').val(100-porcentajeEmpleado)
-        let = porcentajeCasa = $('#porcentajeCasa').val();
-
-        let gananciaCasa = precio*(porcentajeCasa/100);
-        let gananciaEmpleado = precio*(porcentajeEmpleado/100);
-        $('#gananciaCasa').val(gananciaCasa);
-        $('#gananciaEmpleado').val(gananciaEmpleado);
+    $('#gananciaEmpleado').on('change', function(){
+        let precio = Number(parseFloat($('#precioServicio').val()).toFixed(2));
+        let gananciaEmpleado = Number(parseFloat($('#gananciaEmpleado').val()).toFixed(2));
+        if(precio >= gananciaEmpleado){
+        $('#gananciaCasa').val(precio-gananciaEmpleado);
+        $('#porcentajeCasa').val((((precio-gananciaEmpleado)*100)/precio).toFixed(2));
+        $('#porcentajeEmpleado').val(((gananciaEmpleado*100)/precio).toFixed(2))
+        }else{
+            $('#gananciaEmpleado').val("0")
+            alert('No se puede tener una ganancia mayor al precio total del servicio');
+        }
     })
 
     function crearTabla(page, records_per_page){
@@ -150,7 +145,6 @@ $(document).ready(function(){
          $('#porcentajeCasa').val(producto[0].porcentajeCasa)
          $('#gananciaCasa').val(producto[0].gananciaCasa)
          $('#gananciaEmpleado').val(producto[0].gananciaEmpleado)
-        //  $('#stock').html(`<strong>${producto[0].cantidad}</strong>`)
          $('#formulario').modal("show")
  
         })}else{
@@ -159,6 +153,7 @@ $(document).ready(function(){
     });
     $('#editarProducto').click(function(e){
          e.preventDefault();
+         let usuario = $('#username').val()
          let id = $('#idServicio').val();
          let nombre = $('#nombreServicio').val();
          let tipo = $('#tipo').val();
@@ -170,6 +165,7 @@ $(document).ready(function(){
          let gananciaEmpleado = $('#gananciaEmpleado').val();
           
         const data = {
+            usuario,
             id,
             nombre,
             tipo,
@@ -208,8 +204,9 @@ $(document).ready(function(){
          let porcentajeCasa = $('#porcentajeCasa').val();
          let gananciaCasa = $('#gananciaCasa').val();
          let gananciaEmpleado = $('#gananciaEmpleado').val();
-          
+         let username = $('#username').val(); 
         const data = {
+            username,
             nombre,
             tipo,
             duracion,

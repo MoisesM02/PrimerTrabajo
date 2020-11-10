@@ -1,8 +1,9 @@
 <?php
 include('connection.php');
-if((isset($_POST["id"]) && !empty($_POST["id"])) && isset($_POST["nombre"]) && isset($_POST["tipo"]) && isset($_POST["duracion"]) && isset($_POST["precioServicio"]) && isset($_POST["porcentajeEmpleado"]) && isset($_POST["porcentajeCasa"]) && isset($_POST["gananciaCasa"]) && isset($_POST["gananciaEmpleado"])){
+if((isset($_POST["id"]) && !empty($_POST["id"])) && isset($_POST["nombre"]) && isset($_POST["tipo"]) && isset($_POST["duracion"]) && isset($_POST["precioServicio"]) && isset($_POST["porcentajeEmpleado"]) && isset($_POST["porcentajeCasa"]) && isset($_POST["gananciaCasa"]) && isset($_POST["gananciaEmpleado"]) && isset($_POST["usuario"])){
     $id = filter_var($_POST["id"], FILTER_SANITIZE_STRING);
     $nombre = filter_var(utf8_decode($_POST["nombre"]), FILTER_SANITIZE_STRING);
+    $usuario = filter_var(utf8_decode($_POST["usuario"]), FILTER_SANITIZE_STRING);
     $tipo = filter_var(utf8_decode($_POST["tipo"]), FILTER_SANITIZE_STRING);
     $duracion = filter_var(utf8_decode($_POST["duracion"]), FILTER_SANITIZE_STRING);
     $precioServicio = filter_var($_POST["precioServicio"], FILTER_SANITIZE_STRING);
@@ -12,7 +13,7 @@ if((isset($_POST["id"]) && !empty($_POST["id"])) && isset($_POST["nombre"]) && i
     $gananciaEmpleado = filter_var($_POST["gananciaEmpleado"], FILTER_SANITIZE_STRING);
     
         try{
-        $stmt = $conn->prepare("UPDATE Servicios SET Tiempo =:tiempo, Precio_Total =:precioTotal, Porcentaje_Casa =:porcentajeCasa, Porcentaje_Empleada =:porcentajeEmpleada, Tipo =:tipo, Nombre_de_Servicio =:nombreServicio, Ganancia_de_Empleado =:gananciaEmpleado, Ganancia_de_Casa =:gananciaCasa WHERE ID =:id");
+        $stmt = $conn->prepare("UPDATE Servicios SET Tiempo =:tiempo, Precio_Total =:precioTotal, Porcentaje_Casa =:porcentajeCasa, Porcentaje_Empleada =:porcentajeEmpleada, Tipo =:tipo, Nombre_de_Servicio =:nombreServicio, Ganancia_de_Empleado =:gananciaEmpleado, Ganancia_de_Casa =:gananciaCasa, Usuario =:usuario, Editado_en = NOW() WHERE ID =:id");
         $result = $stmt->execute([
             
             "tiempo" => $duracion,
@@ -23,6 +24,7 @@ if((isset($_POST["id"]) && !empty($_POST["id"])) && isset($_POST["nombre"]) && i
             "nombreServicio" =>$nombre,
             "gananciaEmpleado" => $gananciaEmpleado,
             "gananciaCasa" => $gananciaCasa,
+            "usuario" => $usuario,
             "id" => $id
         ]);
         if($result){
@@ -37,7 +39,6 @@ if((isset($_POST["id"]) && !empty($_POST["id"])) && isset($_POST["nombre"]) && i
 
 }else{
     echo "Debes ingresar todos los datos";
-    print_r($_POST);
 }
 
 ?>

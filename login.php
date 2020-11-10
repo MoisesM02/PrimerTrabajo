@@ -18,7 +18,6 @@ if(!empty($_SESSION["username"])){
     <script src="js/login.js"></script>
 </head>
 <body>
-   <?php include('includes/menu.php') ?>
     <!-- Formulario -->
     <div class="row">
     <div class="col-sm-2 col-md-3 col-lg-3"></div>

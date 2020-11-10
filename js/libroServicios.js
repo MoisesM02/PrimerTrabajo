@@ -1,15 +1,43 @@
 $(document).ready(function(){
+moment.locale('es');
 let startDate = moment().startOf('day'); 
 let endDate = moment();
+let initialDate =moment(); 
+let finalDate = moment(); 
 cargarRegistros(1,10,"Todos",startDate.format('YYYY-MM-D HH:mm:ss'),endDate.format('YYYY-MM-D HH:mm:ss'));
 $('#reportrange span').html(startDate.format('D MMMM YYYY') + ' - ' + endDate.format('D MMMM YYYY'));
 
 
-cargarSelect()
+cargarSelect();
+cargarSelectServicios();
+cargarHabitaciones();
 $('#disponibles').on('change', function(){
     cargarSelect();
 })
-// Llenar Select
+$('#habitacionesDisponibles').on('change', function(){
+    cargarHabitaciones();
+})
+
+function cargarHabitaciones(){
+    let habitacionesDisponibles = $('#habitacionesDisponibles').prop('checked');
+    console.log(habitacionesDisponibles)
+    const data = (habitacionesDisponibles) ? {'now' : moment().format('YYYY-MM-D HH:mm:ss')} : {};
+    $.post("Backend/select-habitaciones-disponibles.php", data, function(response){
+        try {
+            let habitaciones = JSON.parse(response);
+            let template = ""
+            habitaciones.forEach(habitacion =>{
+                template += `<option value ="${habitacion.habitacion}">${habitacion.habitacion}</option>`;
+            })
+            $('#habitacion').html(template);
+        } catch (error) {
+            alert(response);
+        }
+    })
+}
+
+
+// Llenar Select Empleadas
 function cargarSelect(){
     
     let disponibles = $('#disponibles').prop('checked');
@@ -20,18 +48,60 @@ function cargarSelect(){
     $.post(direccion, data, function(response){
         try{
             let res = JSON.parse(response);
-            let template = "<option value='Todos'>Todas</option>";
+            let template;
+            if(direccion == 'Backend/select-all-empleadas.php'){
+            template = "<option value='Todos'>Todas</option>";
+            }
+            
             res.forEach(empleada => {
                 template += `
                 <option value = "${empleada.nombreEmpleada}">${empleada.nombreEmpleada} </option>
                 `;
             })
-            $('#Empleada').html(template)   
+            $('.Empleadas').html(template)   
         }catch(e){
             alert(response)
         }
     })
 } 
+
+function cargarSelectServicios(){
+    $.get("Backend/select-servicios.php",function(response){
+        try{
+        let servicios = JSON.parse(response);
+        let template = `<option></option>`;
+        servicios.forEach(servicio =>{
+            template += `<option data-name="${servicio.nombreServicio}" value="${servicio.id}">${servicio.nombreServicio}</option>`
+        })
+        $('#servicioPrestado').html(template);
+    }catch(e){
+        alert(response);
+    }
+    })
+}
+
+$('#servicioPrestado').on('change', function(e){
+    e.preventDefault();
+    let id = $('#servicioPrestado').val();
+    $.post("Backend/fill-services-form.php", {id}, function(response){
+        try{
+            let servicio = JSON.parse(response);
+            console.log(servicio[0].id);
+            $('#duracion').val(servicio[0].tiempo);
+            $('#tipoServicio').val(servicio[0].tipo);
+            $('#precioServicio').val(servicio[0].precioTotal);
+            $('#gananciaCasa').val(servicio[0].gananciaCasa);
+            $('#gananciaEmpleado').val(servicio[0].gananciaEmpleado);
+
+        }catch(e){
+            console.log(response + e.getMessage());
+        }
+    })
+})
+//Agregar al registro
+
+
+
 
 
 //Cargar Tabla
@@ -51,7 +121,7 @@ $.post(direccion,data, function(response){
     let res = JSON.parse(response)
     let entradas = (res[0])
     let template = "";
-    template = `<center><table id='tablaDeDatos' style='cursor:pointer' class ='table table-striped table-bordered'>
+    template = `<center><table id='tablaDeDatos' style='cursor:pointer' class ='table table-striped '>
     <thead class='thead-dark'>
     <tr>
     <th>Empleada</th>
@@ -60,9 +130,9 @@ $.post(direccion,data, function(response){
     <th>Usuario</th>
     <th>Precio de servicio</th>
     <th>Ganancia de empleada</th>
-    <th>Ganancia de casa</th>
-    <th>Descuentos a empleada</th>
+    <th>Descuentos por Limpieza</th>
     <th>Pago total a empleada</th>
+    <th>Ganancia de casa</th>
     <th>Fecha y hora de inicio</th>
     <th>Fecha y hora de culminación</th>
     <th>Habitación</th>
@@ -89,9 +159,9 @@ $.post(direccion,data, function(response){
         <td>${entrada.usuario}</td>
         <td>$${entrada.precioFinal}</td>
         <td>$${entrada.gananciaEmpleada}</td>
-        <td>$${entrada.gananciaCasa}</td>
         <td>$${entrada.descuentosEmpleada}</td>
         <td>$${entrada.totalEmpleada}</td>
+        <td>$${entrada.gananciaCasa}</td>
         <td>${entrada.fechaInicio}</td>
         <td>${entrada.fechaFinal}</td>
         <td>${entrada.habitacion}</td>
@@ -100,16 +170,16 @@ $.post(direccion,data, function(response){
         `;
     });
     if(res[1].nombreEmpleada != "Todos"){
-        template += ` <tr>
+        template += ` <tr class ="table-primary">
         <td>Total de ganancia</td>
         <td></td>
         <td></td>
         <td></td>
         <td>$${totalServicios}</td>
         <td>$${sumaEmpleada}</td>
-        <td>$${sumaCasa}</td>
         <td>$${descuentosEmpleada}</td>
         <td>$${totalEmpleada}</td>
+        <td>$${sumaCasa}</td>
         <td></td>
         <td></td>
         <td></td>
@@ -146,21 +216,27 @@ $.post(direccion,data, function(response){
 $(document).on('click', '.pagination-link', function(){
     var page = $(this).attr('data-page');
     $('#PageNumber').val(page)
-    
+    var empleada = $('#Empleada').val()
     var records_per_page = $('#numOfRecords').val();
-    load_data(page, records_per_page)
+    cargarRegistros(page, records_per_page,empleada ,startDate.format('YYYY-MM-D HH:mm:ss'), endDate.format('YYYY-MM-D HH:mm:ss'))
 })
 $('#records_numbers').on('change', function(){
  let val =  $('#records_numbers').val()
+ var empleada = $('#Empleada').val()
  $('#numOfRecords').val(val);
  let pgnumber = 1
- load_data(pgnumber, val);
+ cargarRegistros(pgnumber, records_per_page,empleada ,startDate.format('YYYY-MM-D HH:mm:ss'), endDate.format('YYYY-MM-D HH:mm:ss'));
 })
+
+//Mostrar Modal para crear una entrada
+
+
+
 
 // Datepicker
     $('#reportrange span').daterangepicker(
         {
-           startDate: moment().subtract(29, 'days'),
+           startDate: moment().startOf('day'),
            endDate: moment(),
            
            showDropdowns: true,
@@ -169,7 +245,7 @@ $('#records_numbers').on('change', function(){
            timePickerIncrement: 1,
            timePicker24Hour: true,
            
-           opens: 'left',
+           opens: 'center',
            buttonClasses: ['btn btn-default'],
            applyClass: 'btn-small btn-primary',
            cancelClass: 'btn-small',
@@ -194,7 +270,7 @@ $('#records_numbers').on('change', function(){
         }
      );
      //Set the initial state of the picker label
-     $('#reportrange span').html(moment().subtract(0, 'days').format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
+     $('#reportrange span').html(moment().format('LL') + ' - ' + moment().format('D MMMM YYYY'));
  
      $('#saveButton').click(function(){
 
@@ -203,11 +279,114 @@ $('#records_numbers').on('change', function(){
         let empleada = $("#Empleada").val(); 
         let numerodeEntradas = $('#numOfRecords').val();
         let pages = $('#pageNumber').val();
-         //console.log(startDate.format('YYYY-MM-D hh:mm:ss') + ' - ' + endDate.format('YYYY-MM-D hh:mm:ss')); //Así se obtienen los datos
-         cargarRegistros(pages, numerodeEntradas, empleada, inicio, final)
-
-
+        cargarRegistros(pages, numerodeEntradas, empleada, inicio, final)
      });
+
+
+
+//Formulario para añadir
+        $('#addService').click(function(e){
+            e.preventDefault();
+                let duracion =$('#duracion').val()
+                let tipo = $('#tipoServicio').val()
+                let username = $('#username').val()
+                let habitacion = $('#habitacion').val()
+                let descuentos = $('#descuentos').val()
+                let nombreServicio = $('#servicioPrestado').find(':selected').attr('data-name')
+                let nombreEmpleada = $('#nombreEmpleada').val()
+                let precioServicio = $('#precioServicio').val()
+                let gananciaCasa = $('#gananciaCasa').val()
+                let gananciaEmpleado = $('#gananciaEmpleado').val()
+                let fechaInicio = initialDate.format('YYYY-MM-D HH:mm:ss');
+                let fechaFinal = finalDate.format('YYYY-MM-D HH:mm:ss');
+                const data ={
+                    duracion,
+                    tipo,
+                    username,
+                    habitacion,
+                    descuentos,
+                    nombreServicio,
+                    nombreEmpleada,
+                    precioServicio,
+                    gananciaCasa,
+                    gananciaEmpleado,
+                    fechaInicio,
+                    fechaFinal
+                };
+                $.post("Backend/create-services-book.php", data, function(response){
+                    alert(response)
+                    cargarSelect();
+                    $('#addToRegisterBook').trigger('reset');
+                    $('#habitacionesDisponibles').prop('checked', false).change();
+                    cargarHabitaciones();
+                    
+                    
+                })
+            })
+    
+
+
+// Deshabilitar los textbox
+        $('#duracion').attr('disabled', 'disabled'); 
+        $('#tipoServicio').attr('disabled', 'disabled'); 
+        $('#precioServicio').attr('disabled', 'disabled'); 
+        $('#gananciaCasa').attr('disabled', 'disabled'); 
+        $('#gananciaEmpleado').attr('disabled', 'disabled'); 
+
+
+
+
+        $('#showModal').click(function(e){
+            e.preventDefault();
+            edit = false;
+            console.log()
+            $('#formulario').modal("show")
+        });
+
+
+     $('#dateRange span').daterangepicker(
+        {
+           startDate: moment(),
+           endDate: moment(),
+           
+           showDropdowns: true,
+           showWeekNumbers: true,
+           timePicker: true,
+           timePickerIncrement: 1,
+           timePicker24Hour: true,
+           
+           opens: 'center',
+           buttonClasses: ['btn btn-default'],
+           applyClass: 'btn-small btn-primary',
+           cancelClass: 'btn-small',
+           dateFormat: 'DD-MMMM-YYYY:',
+           timeFormat:  "hh:mm:ss",
+           separator: ' Hasta ',
+           minDate: moment().format('YYYY-MM-D HH:mm:ss'),
+           locale: {
+               applyLabel: 'Confirmar',
+               cancelLabel: 'Cancelar',
+               fromLabel: 'Desde',
+               toLabel: 'Hasta',
+               customRangeLabel: 'Rango específico',
+               daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi','Sa'],
+               monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+               firstDay: 1
+           }
+        },
+        function(start, end) {
+         $('#dateRange span').html(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'));
+        initialDate = start;
+        finalDate = end;    
+ 
+        }
+     );
+     //Set the initial state of the picker label
+     $('#dateRange span').html(moment().subtract(0, 'days').format('D MMMM YYYY') + ' - ' + moment().format('D MMMM YYYY'));
+ 
+
+
+
  
   });
 // })

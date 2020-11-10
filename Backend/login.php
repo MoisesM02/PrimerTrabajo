@@ -3,7 +3,7 @@ include("connection.php");
 session_start();
 
 if(!empty($_POST)){
-    $username = $_POST['usuario'];
+    $username = utf8_decode($_POST['usuario']);
     $password = $_POST['contra'];
 
     $usernameSanitized = htmlspecialchars($username);

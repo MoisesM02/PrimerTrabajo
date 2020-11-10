@@ -22,23 +22,31 @@
             <div class="form-group">
                     <label for="precioEmpleado">Categoría</label>
                     <input type="text" class="form-control" id="categoriaProducto" placeholder = "Categoría del producto">
-                    </div>
+            </div>
             <div class="form-group">
                     <label for="precioEmpleado">Precio de compra por unidad</label>
                     <input type="text" class="form-control" id="precioCompra" placeholder = "Precio de compra">
-                    </div>
+            </div>
+            <div class="form-group">
+                    <label for="precioEmpleado">Precio cliente</label>
+                    <input type="text" class="form-control" id="precioCliente" placeholder = "Categoría del producto">
+            </div>
+            <div class="form-group">
+                    <label for="precioEmpleado">Precio empleado</label>
+                    <input type="text" class="form-control" id="precioEmpleado" placeholder = "Precio de compra">
+            </div>
             <div class="row">
             <div class="col-md-5">
                     <div class="form-group">
-                    <label for="precioCliente">Precio cliente</label>
-                    <input type="text" class="form-control" id="precioCliente" placeholder = "Precio cliente">
+                    <label for="precioCliente">Ganancia empleado</label>
+                    <input type="text" class="form-control" id="gananciaEmpleado" placeholder = "Ganancia empleado">
                     </div>
                 </div>
                 <div class="col-md-2"></div>
                 <div class="col-md-5">
                     <div class="form-group">
-                    <label for="precioEmpleado">Precio empleado</label>
-                    <input type="text" class="form-control" id="precioEmpleado" placeholder = "Precio empleado">
+                    <label for="precioEmpleado">Ganancia casa</label>
+                    <input type="text" class="form-control" id="gananciaCasa" placeholder = "Ganancia casa">
                     </div>
                 </div>
             </div>
@@ -48,7 +56,7 @@
             </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger register-button" data-dismiss="modal">Cerrar</button>
+        <button type="button" id="cerrarModal" class="btn btn-danger register-button" data-dismiss="modal">Cerrar</button>
         <button type="button" id ="editarProducto" class="btn btn-secondary register-button">Editar producto</button>
         <button type="button" id ="crearProducto" class="btn btn-primary register-button">Crear producto</button>
       </form>

@@ -19,18 +19,18 @@ if (isset($_POST["pageNumber"]))
     }
 }
 $start_from = ($page-1)*$records_per_page;
-$stmt = $conn->prepare("SELECT * from Productos ORDER BY ID ASC LIMIT $start_from, $records_per_page;");
+$stmt = $conn->prepare("SELECT * from Productos ORDER BY ID_Producto ASC LIMIT $start_from, $records_per_page;");
 $result =$stmt->execute();
 if($result){
 $json = [];
 while($producto = $stmt->fetch(PDO::FETCH_ASSOC)){
-    $idProduct = $producto["ID"];
+    $idProduct = $producto["ID_Producto"];
     $nombre = utf8_encode($producto["Nombre_de_Producto"]);
     $Codigo = $producto["Codigo_de_Producto"];
     $precioEmpleado = $producto['Precio_Empleado'];
     $precioClientes = $producto["Precio_Clientes"];
     $precioCompra = $producto["Precio_de_Compra"];
-    $categoria = $producto["Categoria"];
+    $categoria = utf8_decode($producto["Categoria"]);
     $cantidad = $producto["Cantidad_en_Stock"];
     $json[] = [
         "id" => $idProduct,

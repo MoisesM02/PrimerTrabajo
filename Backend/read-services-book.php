@@ -26,7 +26,7 @@ $fechaDeFin = $_POST["fechaFinal"];
 
 
 if($empleada == "Todos"){
-$stmt = $conn->prepare("SELECT * from LibroServicios WHERE Fecha_Inicio AND Fecha_Finalizacion BETWEEN :fechaInicio AND :fechaFinal ORDER BY ID DESC LIMIT $start_from, $records_per_page;");
+$stmt = $conn->prepare("SELECT * from LibroServicios WHERE Fecha_Inicio BETWEEN :fechaInicio AND :fechaFinal ORDER BY ID DESC LIMIT $start_from, $records_per_page;");
 $result =$stmt->execute(["fechaInicio" => $fechainicial,
 "fechaFinal" =>$fechaDeFin]);
 
@@ -85,7 +85,7 @@ echo json_encode($data);
     echo "No se encontraron los datos buscados.";
 }
 }else{
-$stmt = $conn->prepare("SELECT * from LibroServicios WHERE Nombre_Empleada =:empleada AND (Fecha_Inicio AND Fecha_Finalizacion BETWEEN :fechaInicio AND :fechaFinal) ORDER BY ID DESC LIMIT $start_from, $records_per_page;");
+$stmt = $conn->prepare("SELECT * from LibroServicios WHERE Nombre_Empleada =:empleada AND (Fecha_Inicio BETWEEN :fechaInicio AND :fechaFinal OR Fecha_Finalizacion BETWEEN :fechaInicio AND :fechaFinal) ORDER BY ID DESC LIMIT $start_from, $records_per_page;");
 $result =$stmt->execute(["empleada" => $empleada,
 "fechaInicio" => $fechainicial,
 "fechaFinal" =>$fechaDeFin
@@ -127,7 +127,7 @@ while($registro = $stmt->fetch(PDO::FETCH_ASSOC)){
     
 }
 
-$pageQuery = $conn->prepare("SELECT COUNT(*) from LibroServicios WHERE Nombre_Empleada =:empleada AND (Fecha_Inicio OR Fecha_Finalizacion BETWEEN :fechaInicio AND :fechaFinal)");
+$pageQuery = $conn->prepare("SELECT COUNT(*) from LibroServicios WHERE Nombre_Empleada =:empleada AND (Fecha_Inicio OR Fecha_Finalizacion  BETWEEN :fechaInicio AND :fechaFinal)");
 $pageResult = $pageQuery->execute(["empleada" => $empleada,
 "fechaInicio" => $fechainicial,
 "fechaFinal" =>$fechaDeFin
